@@ -1,0 +1,12 @@
+name: Repository Dispatch
+on:
+  repository_dispatch:
+    types: [my-event]
+
+jobs:
+  print-payload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print client payload data
+        run: |
+          echo "Received data: ${{ github.event.client_payload.data }}"
