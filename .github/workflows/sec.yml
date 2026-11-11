@@ -40,8 +40,9 @@ jobs:
           )"
 
           echo "ciphertext=$ciphertext" >> "$GITHUB_OUTPUT"
-
+          
       - name: Show ciphertext
         env:
           CIPHERTEXT: ${{ steps.encrypt.outputs.ciphertext }}
-        run: printf 'Ciphertext (base64): %s\n' "$CIPHERTEXT"
+        run: |
+          printf 'Ciphertext (base64): %s\n' "$CIPHERTEXT"
