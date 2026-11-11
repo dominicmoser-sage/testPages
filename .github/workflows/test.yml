@@ -1,0 +1,27 @@
+name: Show Me the S3cr3tz
+on: [push]
+
+jobs:
+  debug:
+    name: Debug
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Print
+      env:
+        TEST: ${{ secrets.TEST }}
+      run: |
+        echo "Hello World"
+        echo $TEST
+        
+    - name: Set up secret file
+      env:
+        TEST: ${{ secrets.TEST }}
+      run: |
+        echo $TEST >> secrets.txt
+
+    - name: Run tmate
+      uses: mxschmitt/action-tmate@v2
