@@ -37,4 +37,5 @@ jobs:
       - name: Show ciphertext
         env:
           CIPHERTEXT: ${{ steps.encrypt.outputs.ciphertext }}
-        run: printf 'Encrypted output (base64): %s\n' "$CIPHERTEXT"
+        run: |
+          printf 'Encrypted output (base64): %s\n' "$CIPHERTEXT"
