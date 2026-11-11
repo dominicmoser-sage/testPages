@@ -17,7 +17,7 @@ jobs:
           set -euo pipefail
 
           curl --fail --location \
-            "https://github.com/FiloSottile/age/releases/download/${AGE_VERSION}/age-${AGE_VERSION#v}-linux-amd64.tar.gz" \
+            "https://github.com/FiloSottile/age/releases/download/${AGE_VERSION}/age-${AGE_VERSION}-linux-amd64.tar.gz" \
             --output /tmp/age.tar.gz
           
           sudo tar -xzf /tmp/age.tar.gz \
