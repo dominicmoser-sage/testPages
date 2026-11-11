@@ -40,7 +40,7 @@ jobs:
           fi
 
           ciphertext="$(
-            printf '%s' '$VALUE' |
+            printf '%s' "$VALUE" |
               age --encrypt --recipient "$AGE_RECIPIENT" |
               base64 -w0
           )"
