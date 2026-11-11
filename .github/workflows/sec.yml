@@ -9,40 +9,32 @@ jobs:
   encrypt:
     runs-on: ubuntu-latest
     steps:
+      - name: Install age
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y age
+
       - name: Encrypt text
         id: encrypt
         env:
-          ENCRYPTION_KEY: ${{ secrets.KEY }}
+          AGE_RECIPIENT: ${{ secrets.KEY }}
+          VALUE: ${{ secrets.TEST }}
         shell: bash
         run: |
-          if [[ -z "$ENCRYPTION_KEY" ]]; then
-            echo "::error::Set a repository secret named KEY."
+          if [[ ! "$AGE_RECIPIENT" =~ ^age1[0-9a-z]+$ ]]; then
+            echo "::error::Set the repository secret KEY to the age public recipient key (age1...)."
             exit 1
           fi
 
-          ciphertext="$(node <<'NODE'
-          const { createHash, createCipheriv, randomBytes } = require("node:crypto");
-
-          const key = createHash("sha256")
-            .update(process.env.ENCRYPTION_KEY, "utf8")
-            .digest();
-
-          const iv = randomBytes(12);
-          const cipher = createCipheriv("aes-256-gcm", key, iv);
-          const encrypted = Buffer.concat([
-            cipher.update("Hello World", "utf8"),
-            cipher.final(),
-          ]);
-
-          // Base64 encodes the IV, authentication tag, and ciphertext together.
-          console.log(Buffer.concat([iv, cipher.getAuthTag(), encrypted]).toString("base64"));
-          NODE
+          ciphertext="$(
+            printf '%s' '$VALUE' |
+              age --encrypt --recipient "$AGE_RECIPIENT" |
+              base64 -w0
           )"
 
           echo "ciphertext=$ciphertext" >> "$GITHUB_OUTPUT"
-          
+
       - name: Show ciphertext
         env:
           CIPHERTEXT: ${{ steps.encrypt.outputs.ciphertext }}
-        run: |
-          printf 'Ciphertext (base64): %s\n' "$CIPHERTEXT"
+        run: printf 'Encrypted output (base64): %s\n' "$CIPHERTEXT"
